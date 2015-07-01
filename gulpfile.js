@@ -6,6 +6,6 @@ gulp.task('test', function () {
     return gulp.src('tests/**/*.js').pipe(mocha());
 });
 
-gulp.task('default', function () {
+gulp.task('default', ['test'],function () {
 	return gulp.watch(['*.js','tests/*.js'], ['test']);
 });
