@@ -1,0 +1,19 @@
+{
+  "name": "@claudio/node-timeseries",
+  "version": "0.0.1",
+  "description": "timeseries",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/webartoli/node-timeseries.git"
+  },
+  "author": "Claudio Bartoli <claudio@barto.li>",
+  "license": "Unlicense",
+  "bugs": {
+    "url": "https://github.com/webartoli/node-timeseries/issues"
+  },
+  "homepage": "https://github.com/webartoli/node-timeseries#readme"
+}
