@@ -15,5 +15,9 @@
   "bugs": {
     "url": "https://github.com/webartoli/node-timeseries/issues"
   },
-  "homepage": "https://github.com/webartoli/node-timeseries#readme"
+  "homepage": "https://github.com/webartoli/node-timeseries#readme",
+  "dependencies": {
+    "lodash": "^3.10.0",
+    "moment": "^2.10.3"
+  }
 }
