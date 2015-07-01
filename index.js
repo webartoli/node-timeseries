@@ -3,15 +3,15 @@ var levelup = require('level');
 
 module.exports = function build(dbPath) {
 
-	var db = levelup(dbPath);
+	var db = levelup(dbPath,{
+		valueEncoding:'json'
+	});
 
 	var now;
 	var count;
 
-	return {
-
-		add: function (assetId, value, date, cb) {
-			var current = Date.now();
+	var incCounter = function(){
+		var current = Date.now();
 
 			if (current === now) {
 				count++;
@@ -19,61 +19,59 @@ module.exports = function build(dbPath) {
 				count = 0;
 			}
 			now = current;
-			date = date || moment();
+
+			return now;
+
+	};
+
+	return {
+
+		add: function (value, cb) {
+
+			//TODO: validazione
+			value.date = value.date || moment().toDate();
+
+			incCounter();
 
 			var keyTs = "ts::" + now + ":" + count;
-			var keyAs = "as::" + assetId + "--" + now + ":" + count;
+			var keyAs = "as::" + value.assetId + "--" + now + ":" + count;
 
 			db.batch()
 				.put(keyTs, value)
 				.put(keyAs, value)
 				.write(function (){
-					cb(null);
+					cb(null,value);
 				});
 		},
 
-		fetch: function (from, to, assetId, cb) {
+		getDataStream: function (queryValues, cb) {
+
+			//TODO: Validazione
 
 			var gt;
 			var lt;
 			var prefix;
 			var options;
+			var assetId;
 
-			if (!assetId) {
+			if (!queryValues.assetId) {
 				prefix = "ts::";
 				assetId = "";
 			}
 			else {
 				prefix = "as::";
-				assetId = assetId + "--";
+				assetId = queryValues.assetId + "--";
 			}
 
-			gt = prefix + assetId + from;
-			lt = prefix + assetId + to;
+			gt = prefix + assetId + queryValues.from;
+			lt = prefix + assetId + queryValues.to;
 
 			options = {
 				lt: lt,
 				gt: gt
 			};
-			
-			var result = [];
 
-			db.createReadStream(options)
-				.on('data', function (data) {
-					result.push(data.value);
-					console.log(data.key, '=', data.value);
-			})
-				.on('error', function (err) {
-					console.log('Oh my!', err);
-					cb(err);
-			})
-				.on('close', function () {
-					console.log('Stream closed');
-			})
-				.on('end', function () {
-					console.log('Stream closed');
-					cb(null,result);
-			});
+			return db.createReadStream(options);
 		}
 	};
 };
