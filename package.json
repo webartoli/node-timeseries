@@ -25,6 +25,7 @@
     "gulp": "^3.9.0",
     "gulp-mocha": "^2.1.2",
     "gulp-watch": "^4.2.4",
+    "level-test": "^2.0.0",
     "mocha": "^2.2.5"
   }
 }

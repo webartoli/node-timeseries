@@ -1,11 +1,6 @@
 var moment = require('moment');
-var levelup = require('level');
 
-module.exports = function build(dbPath) {
-
-	var db = levelup(dbPath,{
-		valueEncoding:'json'
-	});
+module.exports = function build(db) {
 
 	var now;
 	var count;
