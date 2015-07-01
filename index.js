@@ -1,11 +1,11 @@
 
 module.exports = {
 	
-	add : function(value){
+	add : function(asset, value){
 		
 	},
 	
-	fetch : function(start, end){
+	fetch : function(asset, start, end){
 		
 	}
 	
