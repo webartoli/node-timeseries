@@ -17,7 +17,14 @@
   },
   "homepage": "https://github.com/webartoli/node-timeseries#readme",
   "dependencies": {
+    "level": "^1.2.0",
     "lodash": "^3.10.0",
     "moment": "^2.10.3"
+  },
+  "devDependencies": {
+    "gulp": "^3.9.0",
+    "karma": "^0.12.37",
+    "karma-mocha": "^0.2.0",
+    "mocha": "^2.2.5"
   }
 }
