@@ -57,12 +57,12 @@ describe("timeSeries Module", function () {
     	if(counter > MAX){
     		return next(null,null);
 		}
-		
+
 		counter++;
 
     	next(null,{
     		assetId: '1',
-      		value: ''+counter
+      		value: ''+counter+Math.random() * (100 - 0) + 0
     	});
     });
 
