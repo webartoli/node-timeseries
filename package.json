@@ -1,6 +1,6 @@
 {
   "name": "@claudio/node-timeseries",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "timeseries",
   "main": "index.js",
   "scripts": {
@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/webartoli/node-timeseries#readme",
   "dependencies": {
+    "joi": "^6.5.0",
     "level": "^1.2.0",
     "lodash": "^3.10.0",
     "moment": "^2.10.3"

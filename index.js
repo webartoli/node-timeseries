@@ -1,29 +1,34 @@
 var moment = require('moment');
+var Joi = require('joi');
 
 module.exports = function build(db) {
-
 	var now;
 	var count;
 
-	var incCounter = function(){
+	var incCounter = function () {
 		var current = Date.now();
 
-			if (current === now) {
-				count++;
-			} else {
-				count = 0;
-			}
-			now = current;
+		if (current === now) {
+			count++;
+		} else {
+			count = 0;
+		}
+		now = current;
 
-			return now;
+		return now;
 
 	};
+
+	var valueSchema = Joi.object().keys({
+		assetId: Joi.string().required(),
+		date: Joi.date(),
+		value: Joi.any().required()
+	});
 
 	return {
 
 		add: function (value, cb) {
 
-			//TODO: validazione
 			value.date = value.date || moment().toDate();
 
 			incCounter();
@@ -34,11 +39,11 @@ module.exports = function build(db) {
 			var keyAs = "as::" + value.assetId + "--" + formattedDate + ":" + count;
 
 			db.batch()
-				.put(keyTs, value,{ valueEncoding: 'json' })
-				.put(keyAs, value,{ valueEncoding: 'json' })
-				.write(function (){
-					cb(null,value);
-				});
+				.put(keyTs, value, { valueEncoding: 'json' })
+				.put(keyAs, value, { valueEncoding: 'json' })
+				.write(function () {
+				cb(null, value);
+			});
 		},
 
 		getDataStream: function (queryValues, cb) {
@@ -64,7 +69,7 @@ module.exports = function build(db) {
 			//lt = prefix + assetId + queryValues.to;
 
 			options = {
-				valueEncoding:'json',
+				valueEncoding: 'json',
 				lte: lt,
 				gte: gt
 			};
