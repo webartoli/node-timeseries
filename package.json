@@ -1,6 +1,6 @@
 {
   "name": "@claudio/node-timeseries",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "timeseries",
   "main": "index.js",
   "scripts": {
@@ -19,7 +19,8 @@
   "dependencies": {
     "joi": "^6.5.0",
     "lodash": "^3.10.0",
-    "moment": "^2.10.3"
+    "moment": "^2.10.3",
+    "through2": "^2.0.0"
   },
   "devDependencies": {
     "callback-stream": "^1.0.2",
