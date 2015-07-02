@@ -2,79 +2,87 @@ var moment = require('moment');
 var Joi = require('joi');
 
 module.exports = function build(db) {
-	var now;
-	var count;
+  var now;
+  var count;
 
-	var incCounter = function () {
-		var current = Date.now();
+  var incCounter = function () {
+    var current = Date.now();
 
-		if (current === now) {
-			count++;
-		} else {
-			count = 0;
-		}
-		now = current;
+    if (current === now) {
+      count++;
+    } else {
+      count = 0;
+    }
+    now = current;
 
-		return now;
+    return now;
 
-	};
+  };
 
-	var valueSchema = Joi.object().keys({
-		assetId: Joi.string().required(),
-		date: Joi.date(),
-		value: Joi.any().required()
-	});
+  var valueSchema = Joi.object().keys({
+    assetId: Joi.string().required(),
+    date: Joi.date(),
+    value: Joi.any().required()
+  });
 
-	return {
+  return {
 
-		add: function (value, cb) {
+    add: function (value, cb) {
 
-			value.date = value.date || moment().toDate();
+      Joi.validate(value, valueSchema, function (err, value) {
+        if (err === null) return;
+        console.error(err);
+      });
 
-			incCounter();
+      value.date = value.date || moment().toDate();
 
-			var formattedDate = Math.floor(value.date / 1000)
+      incCounter();
 
-			var keyTs = "ts::" + formattedDate + ":" + count;
-			var keyAs = "as::" + value.assetId + "--" + formattedDate + ":" + count;
+      var formattedDate = Math.floor(value.date / 1000)
 
-			db.batch()
-				.put(keyTs, value, { valueEncoding: 'json' })
-				.put(keyAs, value, { valueEncoding: 'json' })
-				.write(function () {
-				cb(null, value);
-			});
-		},
+      var keyTs = "ts::" + formattedDate + ":" + count;
+      var keyAs = "as::" + value.assetId + "--" + formattedDate + ":" + count;
 
-		getDataStream: function (queryValues, cb) {
+      db.batch()
+        .put(keyTs, value, { valueEncoding: 'json' })
+        .put(keyAs, value, { valueEncoding: 'json' })
+        .write(function () {
+        cb(null, value);
+      });
+    },
 
-			//TODO: Validazione
+    getDataStream: function (queryValues, cb) {
 
-			var gt;
-			var lt;
-			var prefix;
-			var options;
-			var assetId;
+      // validation
 
-			if (!queryValues.assetId) {
-				prefix = "ts::";
-				assetId = "";
-			}
-			else {
-				prefix = "as::";
-				assetId = queryValues.assetId + "--";
-			}
+      var gt;
+      var lt;
+      var prefix;
+      var options;
+      var assetId;
 
-			//gt = prefix + assetId + queryValues.from;
-			//lt = prefix + assetId + queryValues.to;
+      queryValues.from = queryValues.from || "";
+      queryValues.to = queryValues.to || '\xff';
 
-			options = {
-				valueEncoding: 'json',
-				lte: lt,
-				gte: gt
-			};
+      if (!queryValues.assetId) {
+        prefix = "ts::";
+        assetId = "";
+      }
+      else {
+        prefix = "as::";
+        assetId = queryValues.assetId + "--";
+      }
 
-			return db.createReadStream(options);
-		}
-	};
+      gt = prefix + assetId + queryValues.from;
+      lt = prefix + assetId + queryValues.to;
+
+      options = {
+        valueEncoding: 'json',
+        lte: lt,
+        gte: gt
+      };
+
+      return db.createReadStream(options);
+    }
+  };
 };
