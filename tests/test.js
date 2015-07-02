@@ -37,16 +37,13 @@ describe("timeSeries Module", function () {
     };
 
     timeSeries.add(value, function (err, returnValue) {
-      console.log('error is', err)
       var queryData = {
         assetId: '1'
       };
-      timeSeries.getDataStream({})
+      timeSeries.getDataStream({assetId:'1'})
         .pipe(callbackStream({ objectMode: true }, function (err, data) {
-          // non passo da qui
-        console.log(">>>", err);
-        assert.equal(data.length, 1);
-        done();
+        	assert.equal(data.length, 1);
+	        done();
       }));
     });
   });

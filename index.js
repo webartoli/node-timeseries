@@ -103,7 +103,10 @@ module.exports = function build(db) {
       gte: gt
     };
 
-    return db.createReadStream(options);
+    return db.createReadStream(options).pipe(through2.obj(function (chunk, enc, callback) {
+    	this.push(chunk.value);
+    	callback();
+    }));
 
   }
 

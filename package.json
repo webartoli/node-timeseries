@@ -1,6 +1,6 @@
 {
   "name": "@claudio/node-timeseries",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "timeseries",
   "main": "index.js",
   "scripts": {
