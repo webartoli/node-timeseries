@@ -1,6 +1,8 @@
 var moment = require('moment');
 var through2 = require('through2');
 var Joi = require('joi');
+var util = require('util');
+var stream = require('stream');
 
 module.exports = function build(db) {
   var now;
@@ -24,6 +26,15 @@ module.exports = function build(db) {
     date: Joi.date(),
     value: Joi.any().required()
   });
+
+  function generateWriteStream(){
+  	return util.inherits({
+  		_write:function (chunk, encoding, done) {
+  			console.log(chunk.toString());
+  			done();
+		}
+  	}, stream.Writable);
+  };
 
   function add(value, cb) {
 
@@ -114,6 +125,7 @@ module.exports = function build(db) {
     addSchema: function () { return addValueSchema; },
     add: add,
     getQuerySchema: function () { return getQueryValuesSchema; },
-    getDataStream: getDataStream
+    getDataStream: getDataStream,
+    generateWriteStream:generateWriteStream
   };
 };
