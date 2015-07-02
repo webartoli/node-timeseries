@@ -28,12 +28,14 @@ module.exports = function build(db) {
 
 			incCounter();
 
-			var keyTs = "ts::" + now + ":" + count;
-			var keyAs = "as::" + value.assetId + "--" + now + ":" + count;
+			var formattedDate = Math.floor(value.date / 1000)
+
+			var keyTs = "ts::" + formattedDate + ":" + count;
+			var keyAs = "as::" + value.assetId + "--" + formattedDate + ":" + count;
 
 			db.batch()
-				.put(keyTs, value)
-				.put(keyAs, value)
+				.put(keyTs, value,{ valueEncoding: 'json' })
+				.put(keyAs, value,{ valueEncoding: 'json' })
 				.write(function (){
 					cb(null,value);
 				});
@@ -58,12 +60,13 @@ module.exports = function build(db) {
 				assetId = queryValues.assetId + "--";
 			}
 
-			gt = prefix + assetId + queryValues.from;
-			lt = prefix + assetId + queryValues.to;
+			//gt = prefix + assetId + queryValues.from;
+			//lt = prefix + assetId + queryValues.to;
 
 			options = {
-				lt: lt,
-				gt: gt
+				valueEncoding:'json',
+				lte: lt,
+				gte: gt
 			};
 
 			return db.createReadStream(options);
