@@ -28,12 +28,11 @@ module.exports = function build(db) {
   });
 
   function generateWriteStream(){
-  	return util.inherits({
-  		_write:function (chunk, encoding, done) {
-  			console.log(chunk.toString());
-  			done();
-		}
-  	}, stream.Writable);
+  	var myStream = new stream.Writable({objectMode: true});
+  	myStream._write=function (chunk, encoding, done) {
+		add(chunk,done);
+	};
+	return myStream;
   };
 
   function add(value, cb) {

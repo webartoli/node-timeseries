@@ -2,6 +2,7 @@ var assert = require("assert");
 var level = require('level-test')();
 var timeSeriesFactory = require("../index");
 var callbackStream = require("callback-stream");
+var from = require('from2');
 
 describe("timeSeries Module", function () {
 
@@ -40,12 +41,47 @@ describe("timeSeries Module", function () {
       var queryData = {
         assetId: '1'
       };
-      timeSeries.getDataStream({assetId:'1'})
+      timeSeries.getDataStream(queryData)
         .pipe(callbackStream({ objectMode: true }, function (err, data) {
         	assert.equal(data.length, 1);
 	        done();
       }));
     });
+  });
+
+  it("should expose a writable stream", function (done) {
+    var timeSeries = timeSeriesFactory(db);
+    var counter = 0;
+    var MAX = 2;
+    var stream = from.obj(function(size, next){
+    	if(counter > MAX){
+    		return next(null,null);
+		}
+		
+		counter++;
+
+    	next(null,{
+    		assetId: '1',
+      		value: ''+counter
+    	});
+    });
+
+    stream.pipe(timeSeries.generateWriteStream())
+    .on('error',function(err,data){
+    	console.log("Error",err);
+    	done();
+    })
+    .on('finish',function(){
+      var queryData = {
+        assetId: '1'
+      };
+      timeSeries.getDataStream(queryData)
+        .pipe(callbackStream({ objectMode: true }, function (err, data) {
+        	assert.equal(data.length, MAX);
+	        done();
+      }));
+    })
+    	
   });
 
   afterEach(function (done) {

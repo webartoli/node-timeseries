@@ -24,6 +24,7 @@
   },
   "devDependencies": {
     "callback-stream": "^1.0.2",
+    "from2": "^2.0.3",
     "gulp": "^3.9.0",
     "gulp-mocha": "^2.1.2",
     "gulp-watch": "^4.2.4",
